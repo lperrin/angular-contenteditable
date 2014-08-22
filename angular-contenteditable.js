@@ -28,33 +28,33 @@ angular.module('contenteditable', [])
 
       // view -> model
       element.bind('input', function(e) {
-        scope.$apply(function() {
-          var html, html2, rerender
-          html = element.html()
-          rerender = false
-          if (opts.stripBr) {
-            html = html.replace(/<br>$/, '')
+        var html, html2, rerender
+        html = element.html()
+        rerender = false
+        if (opts.stripBr) {
+          html = html.replace(/<br>$/, '')
+        }
+        if (opts.noLineBreaks) {
+          html2 = html.replace(/<div>/g, '').replace(/<br>/g, '').replace(/<\/div>/g, '')
+          if (html2 !== html) {
+            rerender = true
+            html = html2
           }
-          if (opts.noLineBreaks) {
-            html2 = html.replace(/<div>/g, '').replace(/<br>/g, '').replace(/<\/div>/g, '')
-            if (html2 !== html) {
-              rerender = true
-              html = html2
-            }
-          }
-          ngModel.$setViewValue(html)
-          if (rerender) {
-            ngModel.$render()
-          }
-          if (html === '') {
-            // the cursor disappears if the contents is empty
-            // so we need to refocus
-            $timeout(function(){
-              element[0].blur()
-              element[0].focus()
-            })
-          }
-        })
+        }
+        ngModel.$setViewValue(html)
+        if (rerender) {
+          ngModel.$render()
+        }
+        if (html === '') {
+          // the cursor disappears if the contents is empty
+          // so we need to refocus
+          $timeout(function(){
+            element[0].blur()
+            element[0].focus()
+          })
+        }
+
+        scope.$digest
       })
 
       // model -> view
